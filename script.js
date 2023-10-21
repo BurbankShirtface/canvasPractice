@@ -16,12 +16,9 @@ setCanvasSize();
 // Update canvas size when the window is resized
 window.addEventListener("resize", setCanvasSize);
 
-titleBtn.addEventListener("click", changeTitle);
-backBtn.addEventListener("click", changeBackground);
-let colour;
 function colourChange() {
   let char = "ABCDEF01234567890";
-  colour = "#"; // Declare colour with let or var
+  colour = "#";
   for (let i = 0; i < 6; i++) {
     colour += char[Math.floor(Math.random() * char.length)];
   }
@@ -29,82 +26,65 @@ function colourChange() {
 }
 
 function changeTitle() {
-  colourChange();
-  title.style.color = colour;
+  let randomColour = colourChange();
+  title.style.color = randomColour;
 }
 
 function changeBackground() {
-  colourChange();
-  body.style.background = colour;
+  let randomColour = colourChange();
+  body.style.background = randomColour;
 }
+
+titleBtn.addEventListener("click", changeTitle);
+backBtn.addEventListener("click", changeBackground);
 
 // CIRCLE STUFF
 
-// get x and y coordinates of click event
-// Function to handle mouse click events
-function handleClick(event) {
-  // Get the clicked element
-  const clickedElement = event.target;
-
-  // Check if the clicked element is a button or title
-  if (
-    clickedElement.tagName === "BUTTON" ||
-    clickedElement.tagName === "H1" ||
-    clickedElement.tagName === "H2" /* Add more tag names as needed */
-  ) {
-    // Clicked on a button or title, do nothing
-    return;
+class Circle {
+  constructor(xpos, ypos, radius, colour) {
+    this.xpos = xpos;
+    this.ypos = ypos;
+    this.radius = radius;
+    this.colour = colour;
   }
 
-  // Get the x and y coordinates of the click event
-  const x = event.clientX;
-  const y = event.clientY;
+  draw(context) {
+    context.beginPath();
+    context.arc(this.xpos, this.ypos, this.radius, 0, Math.PI * 2, false);
+    context.strokeStyle = this.colour;
+    context.stroke();
+    context.closePath();
+  }
+}
 
-  // Do something with the x and y coordinates
+function handleEvents(event) {
+  event.preventDefault();
+  let x, y;
+  if (event.clientX && event.clientY) {
+    x = event.clientX;
+    y = event.clientY;
+  } else if (event.touches && event.touches.length > 0) {
+    x = event.touches[0].clientX;
+    y = event.touches[0].clientY;
+  }
+
   console.log("X Coordinate: " + x);
   console.log("Y Coordinate: " + y);
-  class Circle {
-    constructor(xpos, ypos, radius, colour) {
-      this.xpos = xpos;
-      this.ypos = ypos;
-      this.radius = radius;
-      this.colour = colour;
-    }
-
-    draw(context) {
-      context.beginPath();
-      context.arc(this.xpos, this.ypos, this.radius, 0, Math.PI * 2, false);
-      context.strokeStyle = this.colour;
-      context.stroke();
-      context.closePath();
-    }
-  }
-
-  function colourChanger() {
-    let char = "ABCDEF01234567890";
-    let colour1 = "#";
-    for (let i = 0; i < 6; i++) {
-      colour1 += char[Math.floor(Math.random() * char.length)];
-    }
-    console.log(colour1); // Optional: log the color for debugging
-    return colour1; // Return the generated color value
-  }
 
   let randomCircleRadius = Math.floor(Math.random() * 100);
-  let randomCircleColour = colourChanger();
+  let randomCircleColour = colourChange();
   let my_circle = new Circle(x, y, randomCircleRadius, randomCircleColour);
   my_circle.draw(context);
 }
 
-// Add a click event listener to the window
-window.addEventListener("click", handleClick);
+canvas.addEventListener("click", handleEvents);
+canvas.addEventListener("touchstart", handleEvents);
 
 function resetPage() {
-  location.reload();
+  context.clearRect(0, 0, canvas.width, canvas.height);
+  title.style.color = "black";
+  body.style.background = "white";
 }
 
-// Get the reset button element
 let resetBtn = document.querySelector(".reset");
-
-// Add click event listener to the reset button
 resetBtn.addEventListener("click", resetPage);
