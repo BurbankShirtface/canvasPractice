@@ -27,6 +27,7 @@ h1 {
   margin: 50px;
   font-size: 4em;
   z-index: 1;
+  text-align: center;
 }
 
 button {
